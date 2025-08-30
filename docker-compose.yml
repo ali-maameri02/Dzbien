@@ -1,15 +1,32 @@
 version: '3.9'
 
 services:
+  # Nginx Reverse Proxy Service
+  nginx:
+    image: nginx:alpine
+    container_name: propelo-nginx
+    ports:
+      - "80:80"
+      - "443:443"  # Reserved for future SSL
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl  # For SSL certificates
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - frontend
+      - api
+    networks:
+      - propelo-network
+
   # Backend API Service
   api:
     build:
       context: ./PropeloService
       dockerfile: Dockerfile
     container_name: propelo-api
-    ports:
-      - "5000:8080"
-      - "5001:8081"
+    expose:
+      - "8080"
+      - "8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=PropeloDb;User=sa;Password=Your_password123;TrustServerCertificate=True;Encrypt=False;
@@ -32,14 +49,14 @@ services:
     networks:
       - propelo-network
 
-  # Frontend Service
+  # Frontend Service (now internal only)
   frontend:
     build:
       context: ./propelo-front
       dockerfile: Dockerfile
     container_name: propelo-frontend
-    ports:
-      - "80:80"
+    expose:
+      - "80"  # Expose internally only
     volumes:
       - ./propelo-front/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
@@ -53,5 +70,3 @@ volumes:
 networks:
   propelo-network:
     driver: bridge
-
-    
