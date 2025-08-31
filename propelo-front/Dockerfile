@@ -4,7 +4,7 @@ FROM node:lts-alpine as build
 WORKDIR /app
 
 # Copy package.json and yarn.lock, then install dependencies
-COPY package.json yarn.lock ./
+COPY package.json ./
 RUN npm install -f
 
 # Copy the rest of the source code and build the app
@@ -26,4 +26,4 @@ COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
 
 # Start Nginx when the container starts
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
