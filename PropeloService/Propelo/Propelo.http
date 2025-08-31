@@ -1,0 +1,6 @@
+@Propelo_HostAddress = http://localhost:5053
+
+GET {{Propelo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
